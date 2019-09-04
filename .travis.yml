@@ -16,12 +16,14 @@ before_install:
   - make 
   - popd
 
-#deploy:
-#  provider: releases
-#  api_key: "$GITHUB_API_TOKEN"
-#  file: "wave"
-#  skip_cleanup: true
-#  draft: true
+deploy:
+  provider: releases
+  api_key: "$GITHUB_API_TOKEN"
+  file: 
+    - "waved/cmd/waved"
+    - "cli/wv"
+  skip_cleanup: true
+  draft: true
 
 script:
   - make all
