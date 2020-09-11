@@ -2,9 +2,13 @@ Forked version of WAVE that works
 
 ### Requirements
 1. Trillian: version 1.3.2
-    go get github.com/google/trillian
-    cd $GOPATH/src/github.com/google/trillian
-    git checkout 10ac7e3add265b489e5d3b33c9c355850b635e88
+
+    `go get github.com/google/trillian`
+
+    `cd $GOPATH/src/github.com/google/trillian`
+
+    `git checkout 10ac7e3add265b489e5d3b33c9c355850b635e88`
+
 2. This repo
 
 
