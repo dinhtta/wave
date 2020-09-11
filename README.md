@@ -43,6 +43,9 @@ Forked version of WAVE that works
 3. Start wave server:
   + `cd init; ../server`
 
-4. Run test:
+4. Start wave auditor:
+  + `cd auditor; ./auditor config.toml`
+
+5. Run test:
   + `cd storage/testbench`
   + `go test .`

@@ -2,8 +2,8 @@
 targetaddress = "127.0.0.1:4520"
 targetpublickey = """
 -----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEKG6NaA54Fx6m7Ih019r1LDXDf7ay
-CQKL0D2lvjF0TcQP8Kx+lFrRyjvqBJrrv5KUPcbBYWXJwscLTDkwA3zBtg==
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEdgl41jCTp+Elxv1UzSoonFQxdd4d
+bjaWQL5EYcghyIv3KRyR3PV2C87LHmk3FRWNbbfHlQZmJv7cWpJKNsjy3Q==
 -----END PUBLIC KEY-----"""
 
 outputfile = "audit.log"

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"sync"
-
 	"github.com/gogo/protobuf/proto"
 	"github.com/google/trillian"
 	"github.com/immesys/wave/storage/vldmstorage3/vldmpb"

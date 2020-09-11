@@ -234,6 +234,10 @@ func (a *adt) UpdateOpLog() {
 	if err != nil {
 		panic(err)
 	}
+
+  var v1root types.LogRootV1
+  v1root.UnmarshalBinary(slr.GetLogRoot())
+
 	if a.state.OpLogHead == nil {
 		newroot, err := a.logVerifier.VerifyRoot(&types.LogRootV1{}, &slr, nil)
 		if err != nil {
@@ -243,11 +247,11 @@ func (a *adt) UpdateOpLog() {
 		a.state.OpLogHead = newroot
 		a.state.SignedOpLogHead = ba
 		a.SaveStateToDB()
-	} else if int64(a.state.OpLogHead.TreeSize) < slr.TreeSize {
+	} else if int64(a.state.OpLogHead.TreeSize) < int64(v1root.TreeSize) {//slr.TreeSize {
 		cresp, err := a.tgt.GetLogConsistency(context.Background(), &vldmpb.GetConsistencyParams{
 			IsOperation: true,
 			From:        int64(a.state.OpLogHead.TreeSize),
-			To:          slr.TreeSize,
+			To:          int64(v1root.TreeSize), //slr.TreeSize,
 		})
 		if err != nil {
 			panic(err)
@@ -277,9 +281,14 @@ func (a *adt) UpdateRootLog() {
 	ba := resp.TrillianSignedLogRoot
 	slr := trillian.SignedLogRoot{}
 	err = proto.Unmarshal(ba, &slr)
+
+  var v1root types.LogRootV1
+  v1root.UnmarshalBinary(slr.GetLogRoot())
+
 	if err != nil {
 		panic(err)
 	}
+  //fmt.Printf("Auditing, tree size %v vs. state tree size %v\n", v1root.TreeSize, a.state.RootLogHead.TreeSize)
 	if a.state.RootLogHead == nil {
 		newroot, err := a.logVerifier.VerifyRoot(&types.LogRootV1{}, &slr, nil)
 		if err != nil {
@@ -289,11 +298,11 @@ func (a *adt) UpdateRootLog() {
 		a.state.RootLogHead = newroot
 		a.state.SignedRootLogHead = ba
 		a.SaveStateToDB()
-	} else if int64(a.state.RootLogHead.TreeSize) < slr.TreeSize {
+	} else if int64(a.state.RootLogHead.TreeSize) < int64(v1root.TreeSize) {//slr.TreeSize {
 		cresp, err := a.tgt.GetLogConsistency(context.Background(), &vldmpb.GetConsistencyParams{
 			IsOperation: false,
 			From:        int64(a.state.RootLogHead.TreeSize),
-			To:          slr.TreeSize,
+			To:          int64(v1root.TreeSize), //slr.TreeSize,
 		})
 		if err != nil {
 			panic(err)

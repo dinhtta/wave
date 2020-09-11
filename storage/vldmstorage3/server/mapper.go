@@ -125,7 +125,6 @@ func PerformOneMap(certifierIDs []string) (bool, error) {
 		}
     var v1root types.LogRootV1
     v1root.UnmarshalBinary(llr.SignedLogRoot.GetLogRoot())
-    fmt.Printf("Checking proof for hash %v\n", rootResp.QueuedLeaf.Leaf.LeafIdentityHash)
 
 		rootloginclusion, err := logclient.GetInclusionProofByHash(context.Background(), &trillian.GetInclusionProofByHashRequest{
 			LogId:    TreeID_Root,
@@ -133,12 +132,10 @@ func PerformOneMap(certifierIDs []string) (bool, error) {
 			TreeSize: int64(v1root.TreeSize),//llr.SignedLogRoot.TreeSize,
 		})
 		if err != nil {
-      fmt.Printf("ERROR inclusion proof %v\n. FAILED for %v\n", err, rootResp.QueuedLeaf.Leaf.LeafIdentityHash)
 			time.Sleep(100 * time.Millisecond)
 			continue
 		}
 
-    fmt.Printf("Got inclusion proof for hash %v\n", rootResp.QueuedLeaf.Leaf.LeafIdentityHash)
 		slrbytes, err := proto.Marshal(rootloginclusion.SignedLogRoot)
 		if err != nil {
 			panic(err)
