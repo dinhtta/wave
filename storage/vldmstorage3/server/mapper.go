@@ -14,7 +14,7 @@ import (
 	"github.com/immesys/wave/storage/vldmstorage2/pb"
 )
 
-const LogBatchSize = 280
+const LogBatchSize = 10//280
 
 var mapperLogClient *client.LogClient
 
@@ -44,7 +44,7 @@ func PerformOneMap(certifierIDs []string) (bool, error) {
 	} else {
 		fmt.Printf("bootstrapping first run\n")
 	}
-	fmt.Printf("Fetching entries [%d+] from log: ", startEntry)
+	fmt.Printf("Fetching entries [%d+] from log:\n", startEntry)
 
 	// Get the entries from the log:
 	entryresp, err := logclient.GetLeavesByRange(context.Background(), &trillian.GetLeavesByRangeRequest{
@@ -112,6 +112,7 @@ func PerformOneMap(certifierIDs []string) (bool, error) {
 			LeafValue: smrbytes,
 		},
 	})
+
 	if err != nil {
 		panic(err)
 	}
@@ -122,16 +123,22 @@ func PerformOneMap(certifierIDs []string) (bool, error) {
 		if err != nil {
 			panic(err)
 		}
+    var v1root types.LogRootV1
+    v1root.UnmarshalBinary(llr.SignedLogRoot.GetLogRoot())
+    fmt.Printf("Checking proof for hash %v\n", rootResp.QueuedLeaf.Leaf.LeafIdentityHash)
+
 		rootloginclusion, err := logclient.GetInclusionProofByHash(context.Background(), &trillian.GetInclusionProofByHashRequest{
 			LogId:    TreeID_Root,
 			LeafHash: rootResp.QueuedLeaf.Leaf.LeafIdentityHash,
-			TreeSize: llr.SignedLogRoot.TreeSize,
+			TreeSize: int64(v1root.TreeSize),//llr.SignedLogRoot.TreeSize,
 		})
 		if err != nil {
+      fmt.Printf("ERROR inclusion proof %v\n. FAILED for %v\n", err, rootResp.QueuedLeaf.Leaf.LeafIdentityHash)
 			time.Sleep(100 * time.Millisecond)
 			continue
 		}
 
+    fmt.Printf("Got inclusion proof for hash %v\n", rootResp.QueuedLeaf.Leaf.LeafIdentityHash)
 		slrbytes, err := proto.Marshal(rootloginclusion.SignedLogRoot)
 		if err != nil {
 			panic(err)
