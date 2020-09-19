@@ -437,6 +437,9 @@ func (s *SimpleHTTPStorage) verifyV1(p *verifyV1params) error {
 	pbslr := trillian.SignedLogRoot{}
 	err = proto.Unmarshal(p.LogRoot, &pbslr)
 
+  var v1root types.LogRootV1
+  v1root.UnmarshalBinary(pbslr.GetLogRoot())
+
 	if s.trustedLogRoot == nil {
 		//This is our first interaction with this storage
 		r, err := tcrypto.VerifySignedLogRoot(s.logVerifier.PubKey, s.logVerifier.SigHash, &pbslr)
@@ -445,7 +448,8 @@ func (s *SimpleHTTPStorage) verifyV1(p *verifyV1params) error {
 		}
 		s.trustedLogRoot = r
 		s.trustedLogRootSerial = p.LogRoot
-	} else if pbslr.TreeSize > int64(s.trustedLogRoot.TreeSize) {
+	} else if int64(v1root.TreeSize) > int64(s.trustedLogRoot.TreeSize) {
+  //else if pbslr.TreeSize > int64(s.trustedLogRoot.TreeSize) {
 		//fmt.Printf("doing consistency proof\n")
 		newRoot, err := s.logVerifier.VerifyRoot(s.trustedLogRoot, &pbslr, p.LogConsistency)
 		if err != nil {

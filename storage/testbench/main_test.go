@@ -43,10 +43,10 @@ func getSimpleHTTPStorageInstance(t testing.TB) iapi.StorageDriverInterface {
 func init() {
 	storageconfig = make(map[string]string)
 	storageconfig["provider"] = "http_v1"
-	storageconfig["url"] = "https://vldm.storage.bwave.io/v1"
+	storageconfig["url"] = "http://127.0.0.1:8080/v1"
 	storageconfig["v1key"] = `-----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwo6w0SSVDM/EXPDFKpogJYtjDDZp
-s+QeDH7bL1HJuTOekmC/Ry1xcSXPTr1/WfywTdT6N1MmYdmz3EXaLJbsJA==
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEdgl41jCTp+Elxv1UzSoonFQxdd4d
+bjaWQL5EYcghyIv3KRyR3PV2C87LHmk3FRWNbbfHlQZmJv7cWpJKNsjy3Q==
 -----END PUBLIC KEY-----`
 	storageconfig["v1auditors"] = "127.0.0.1:5001"
 	cfg := make(map[string]map[string]string)
@@ -129,15 +129,18 @@ func TestPutGet(t *testing.T) {
 	//About the size of an attestation
 	content := make([]byte, 80)
 	rand.Read(content)
-
-	hi, err := in.Put(ctx, content)
+	//hi, err := in.Put(ctx, content)
+  hi, err := in.Put(ctx, content)
 	require.NoError(t, err)
-
-	readback, err := in.Get(ctx, hi)
+  
+  in1 := getInstance(t)
+  ctx1 := context.Background()
+	readback, err := in1.Get(ctx1, hi)
 	require.NoError(t, err)
 	require.EqualValues(t, content, readback)
+  
 }
-
+/*
 func TestPutGetDelay(t *testing.T) {
 	in := getInstance(t)
 	//This has no perspective entity, probably not a problem for now
@@ -163,7 +166,7 @@ func TestPutGetDelay(t *testing.T) {
 		require.NoError(t, err)
 		require.EqualValues(t, content, readback)
 	}
-}
+}*/
 
 func TestEnqueDequeue(t *testing.T) {
 	in := getInstance(t)

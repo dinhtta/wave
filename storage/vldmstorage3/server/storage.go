@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"sync"
 
+  "time"
 	"github.com/gogo/protobuf/proto"
 	"github.com/google/trillian"
 	"github.com/immesys/wave/iapi"
@@ -110,7 +111,6 @@ var ErrMapRootTooOld = errors.New("No recent map roots certified by the given id
 
 func GetMapKeyValue(key []byte, trustedSize int64) (*GetMapKeyResponse, error) {
 	dbSMR := DB.GetLatestMapRoot()
-
 	checkPromise := func() *GetMapKeyResponse {
 		pv := GetPromise(key)
 		if pv != nil {
@@ -229,7 +229,10 @@ func InsertKeyValue(key []byte, value []byte) (*simplehttp.MergePromise, error) 
 	if err != nil {
 		panic(err)
 	}
+  t3 := time.Now()
 	err = DB.InsertObject(hasharr, value)
+  t4 := time.Now()
+  fmt.Printf("DB insert cost %v\n", t4.Sub(t3))
 	if err != nil {
 		return nil, err
 	}

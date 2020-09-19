@@ -156,7 +156,7 @@ func PerformOneMap(certifierIDs []string) (bool, error) {
 			Revision:      newMapRoot.Revision,
 			LogInclusion:  slrinc,
 			LogSignedRoot: slrbytes,
-			LogSize:       llr.SignedLogRoot.TreeSize,
+			LogSize:       int64(v1root.TreeSize),//llr.SignedLogRoot.TreeSize,
 		}
 		err = DB.InsertMapRoot(dbsmr)
 		if err != nil {

@@ -41,6 +41,7 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
+
 	mkr, err := GetMapKeyValue(mh.Digest, trustedSize)
 	if err != nil {
 		w.WriteHeader(500)
@@ -59,6 +60,7 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(&rv)
 		return
 	}
+
 	if mkr.Unmerged {
 		w.WriteHeader(200)
 		rv := simplehttp.ObjectResponse{
